@@ -39,7 +39,7 @@ namespace AuthorMigrationCache
             "https://www.presbyopiaphysician.com/issues/",
             "https://www.retinalphysician.com/issues/"
         };
-        private static readonly string _ioFileBase = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "/ArticleInfo_";
+        private static readonly string _ioFileBase = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\ArticleInfo_";
 
         static async Task Main()
         {
@@ -66,9 +66,9 @@ namespace AuthorMigrationCache
                 return;
             }
 
-            Task.Run(() => Interface.Start(25));
+            Task.Run(() => Interface.Start(fileLines.Length));
 
-            for (int i = 1; i < 25; ++i)
+            for (int i = 1; i < fileLines.Length; ++i)
             {
                 string currentLine = fileLines[i];
                 string articleUrl = "";
