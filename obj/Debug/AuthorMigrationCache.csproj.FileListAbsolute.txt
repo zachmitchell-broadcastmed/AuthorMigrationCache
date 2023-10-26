@@ -1,0 +1,13 @@
+C:\Users\mitchell.zachary\source\repos\AuthorMigrationCache\AuthorMigrationCache\bin\Debug\AuthorMigrationCache.exe.config
+C:\Users\mitchell.zachary\source\repos\AuthorMigrationCache\AuthorMigrationCache\bin\Debug\AuthorMigrationCache.exe
+C:\Users\mitchell.zachary\source\repos\AuthorMigrationCache\AuthorMigrationCache\bin\Debug\AuthorMigrationCache.pdb
+C:\Users\mitchell.zachary\source\repos\AuthorMigrationCache\AuthorMigrationCache\bin\Debug\HtmlAgilityPack.dll
+C:\Users\mitchell.zachary\source\repos\AuthorMigrationCache\AuthorMigrationCache\bin\Debug\Newtonsoft.Json.dll
+C:\Users\mitchell.zachary\source\repos\AuthorMigrationCache\AuthorMigrationCache\bin\Debug\HtmlAgilityPack.pdb
+C:\Users\mitchell.zachary\source\repos\AuthorMigrationCache\AuthorMigrationCache\bin\Debug\HtmlAgilityPack.xml
+C:\Users\mitchell.zachary\source\repos\AuthorMigrationCache\AuthorMigrationCache\bin\Debug\Newtonsoft.Json.xml
+C:\Users\mitchell.zachary\source\repos\AuthorMigrationCache\AuthorMigrationCache\obj\Debug\AuthorMigrationCache.csproj.AssemblyReference.cache
+C:\Users\mitchell.zachary\source\repos\AuthorMigrationCache\AuthorMigrationCache\obj\Debug\AuthorMigrationCache.csproj.CoreCompileInputs.cache
+C:\Users\mitchell.zachary\source\repos\AuthorMigrationCache\AuthorMigrationCache\obj\Debug\AuthorMigrationCache.csproj.CopyComplete
+C:\Users\mitchell.zachary\source\repos\AuthorMigrationCache\AuthorMigrationCache\obj\Debug\AuthorMigrationCache.exe
+C:\Users\mitchell.zachary\source\repos\AuthorMigrationCache\AuthorMigrationCache\obj\Debug\AuthorMigrationCache.pdb
