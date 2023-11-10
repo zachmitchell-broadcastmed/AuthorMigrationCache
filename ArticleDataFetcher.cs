@@ -50,8 +50,8 @@ namespace AuthorMigrationCache
 
                         return new ArticleInfo()
                         {
-                            Title = headline,
-                            Heading = subheadline,
+                            //Title = headline,
+                            //Heading = subheadline,
                             //Body = body
                         };
                     }

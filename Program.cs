@@ -13,6 +13,9 @@ namespace AuthorMigrationCache
 {
     internal class Program
     {
+        private static int _numEmptyAuthorDivs = 0;
+        private static int _completedArticles = 0;
+        private static int _totalArticles = 0;
         private static readonly List<string> _pubSiteNames = new List<string>()
         {
             "Contact Lens Spectrum",
@@ -66,7 +69,8 @@ namespace AuthorMigrationCache
                 return;
             }
 
-            Task.Run(() => Interface.Start(fileLines.Length));
+            //Task.Run(() => Interface.Start(fileLines.Length));
+            _totalArticles = fileLines.Length - 1;
 
             for (int i = 1; i < fileLines.Length; ++i)
             {
@@ -76,10 +80,16 @@ namespace AuthorMigrationCache
 
                 if (string.IsNullOrEmpty(currentLine))
                 {
-                    Interface.IncrementCompleted();
+                    //Interface.IncrementCompleted();
+                    Console.WriteLine($"[{++_completedArticles}/{_totalArticles}]  Empty line");
                     continue;
                 }
-                
+                if (!currentLine.Contains("/Issues/"))
+                {
+                    Console.WriteLine($"[{++_completedArticles}/{_totalArticles}]  Non-issue line");
+                    continue;
+                }
+
                 try
                 {
                     string[] slashSplit = currentLine.Split(new char[] { '/' });
@@ -95,6 +105,7 @@ namespace AuthorMigrationCache
                         if ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '-')
                             articleNameCleaned.Append(c);
                     }
+                    Console.WriteLine($"[{++_completedArticles}/{_totalArticles}]  Attempting scrape for article: " + articleNameCleaned);
 
                     string month = slashSplit[3];
                     if (month.Contains("-"))
@@ -104,6 +115,7 @@ namespace AuthorMigrationCache
                 }
                 catch(Exception e)
                 {
+                    Console.WriteLine($"Error: {e.Message}");
                     errorList.Add(new ErrorInfo()
                     {
                         Url = articleUrl,
@@ -118,10 +130,10 @@ namespace AuthorMigrationCache
                     articleInfos.Add(ai);
                 }
 
-                Interface.IncrementCompleted();
+                //Interface.IncrementCompleted();
             }
 
-            using (StreamWriter sw = new StreamWriter(File.Create(_ioFileBase + _pubSiteNames[userChoice] + ".txt")))
+            using (StreamWriter sw = new StreamWriter(File.Create(_ioFileBase + _pubSiteNames[userChoice] + ".json")))
             {
                 string jsonText = JsonConvert.SerializeObject(articleInfos, Formatting.Indented);
                 sw.WriteLine(jsonText);
@@ -138,8 +150,9 @@ namespace AuthorMigrationCache
                 } 
             }
 
-            Interface.Stop();
-            Console.Clear();
+            //Interface.Stop();
+            //Console.Clear();
+            Console.WriteLine($"\nFiles without an author div: {_numEmptyAuthorDivs}");
             Console.WriteLine("Done!");
             Console.ReadLine();
         }
@@ -186,17 +199,35 @@ namespace AuthorMigrationCache
                     HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
                     doc.LoadHtml(responesBody);
 
-                    string headline = doc.DocumentNode.Descendants().
-                        Where(node => node.HasClass("c-article__headline")).First().InnerText;
+                    string headline = "";
+                    var nodeList = doc.DocumentNode.Descendants().
+                        Where(node => node.HasClass("c-article__headline"));
+                    if (nodeList.Count() > 0)
+                        headline = nodeList.First().InnerText;
 
-                    string subheadline = doc.DocumentNode.Descendants().
-                        Where(node => node.HasClass("c-article__subheadline")).First().InnerText;
+                    string subheadline = "";
+                    nodeList = doc.DocumentNode.Descendants().
+                        Where(node => node.HasClass("c-article__subheadline"));
+                    if(nodeList.Count() > 0)
+                        subheadline = nodeList.First().InnerText;
 
-                    DateTime pubDate = DateTime.Parse(doc.DocumentNode.Descendants().
-                        Where(node => node.HasClass("c-article__dateline")).First().InnerText);
+                    DateTime pubDate = DateTime.MinValue;
+                    nodeList = doc.DocumentNode.Descendants().Where(node => node.HasClass("c-article__dateline"));
+                    if (nodeList.Count() > 0)
+                        pubDate = DateTime.Parse(nodeList.First().InnerText);
 
-                    var body = doc.DocumentNode.Descendants().
-                        Where(node => node.HasClass("c-article__body")).First().InnerHtml;
+                    string authorInner = "";
+                    nodeList = doc.DocumentNode.Descendants().Where(node => node.HasClass("c-article__author"));
+                    if (nodeList.Count() > 0)
+                        authorInner = nodeList.First().InnerHtml;
+                    else
+                        ++_numEmptyAuthorDivs;
+
+                    string body = "";
+                    nodeList = doc.DocumentNode.Descendants().
+                        Where(node => node.HasClass("c-article__body"));
+                    if(nodeList.Count() > 0)
+                        body = nodeList.First().InnerHtml;
 
                     return new ArticleInfo()
                     {
@@ -204,12 +235,13 @@ namespace AuthorMigrationCache
                         Heading = subheadline,
                         PublishDate = pubDate,
                         Body = body,
-                        Url = articleUrl
+                        Url = articleUrl,
+                        Author = authorInner
                     };
                 }
                 else
                 {
-                    //Console.WriteLine($"Error with url {response.StatusCode}: {articleUrl}");
+                    Console.WriteLine($"Error with url {response.StatusCode}: {articleUrl}");
                     return null;
                 }
             }
@@ -224,6 +256,7 @@ namespace AuthorMigrationCache
         public DateTime PublishDate = DateTime.MinValue;
         public string Body = "";
         public string Url = "";
+        public string Author = "";
     }
 
     public class ErrorInfo
